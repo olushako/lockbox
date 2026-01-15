@@ -1,9 +1,15 @@
 #!/bin/bash
 set -e
 
+# Version information
+VERSION="${BUILD_VERSION:-dev}"
+BUILD_DATE="${BUILD_DATE:-unknown}"
+
 echo "========================================="
 echo "Lockbox Backup Container"
 echo "========================================="
+echo "Version: $VERSION"
+echo "Build Date: $BUILD_DATE"
 echo "Starting at: $(date)"
 echo ""
 

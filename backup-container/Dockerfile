@@ -1,5 +1,13 @@
 FROM alpine:3.19
 
+# Build arguments
+ARG BUILD_VERSION=dev
+ARG BUILD_DATE=unknown
+
+# Set as environment variables
+ENV BUILD_VERSION=${BUILD_VERSION}
+ENV BUILD_DATE=${BUILD_DATE}
+
 # Install required packages
 RUN apk add --no-cache \
     bash \
