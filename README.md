@@ -2,7 +2,24 @@
 
 Automated backup solution for Docker volumes, PostgreSQL, and Redis with AES-256 encryption and S3-compatible storage.
 
+[![Build and Push Docker Image](https://github.com/olushako/lockbox/actions/workflows/docker-build.yml/badge.svg)](https://github.com/olushako/lockbox/actions/workflows/docker-build.yml)
+
 ## Quick Start
+
+### Option 1: Use Pre-built Image
+
+```bash
+# Pull the image
+docker pull ghcr.io/olushako/lockbox:latest
+
+# Or use in docker-compose.yml
+services:
+  lockbox-backup:
+    image: ghcr.io/olushako/lockbox:latest
+    # ... rest of configuration
+```
+
+### Option 2: Build from Source
 
 ### 1. Configure Environment
 
@@ -35,6 +52,10 @@ docker run -d --label backup.strategy=redis ...
 ### 3. Deploy
 
 ```bash
+# Using pre-built image
+docker-compose -f docker-compose.prebuilt.yml up -d
+
+# Or build from source
 docker-compose up -d
 ```
 
