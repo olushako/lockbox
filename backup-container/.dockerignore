@@ -1,0 +1,10 @@
+.git
+.gitignore
+.env
+.env.backup
+README.md
+backups/
+*.log
+.DS_Store
+docker-compose.yml
+seed.sql

@@ -1,0 +1,17 @@
+# Backup schedules
+# Format: minute hour day month weekday command
+
+# Backup volumes daily at 2:00 AM
+0 2 * * * /app/backup-volumes.sh >> /var/log/backups/volumes.log 2>&1
+
+# Backup PostgreSQL databases daily at 2:30 AM
+30 2 * * * /app/backup-pg.sh >> /var/log/backups/pg.log 2>&1
+
+# Backup Redis databases daily at 3:00 AM
+0 3 * * * /app/backup-redis.sh >> /var/log/backups/redis.log 2>&1
+
+# Cleanup old backups weekly on Sunday at 4:00 AM
+0 4 * * 0 /app/backup-cleanup.sh >> /var/log/backups/cleanup.log 2>&1
+
+# Log rotation marker (runs daily at 5:00 AM)
+0 5 * * * echo "=== $(date) ===" >> /var/log/backups/cron.log 2>&1
