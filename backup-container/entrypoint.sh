@@ -60,6 +60,33 @@ fi
 echo "Docker socket: OK"
 echo ""
 
+# Test S3 connection
+echo "Testing S3 connection..."
+export AWS_ACCESS_KEY_ID="$S3_ACCESS_KEY"
+export AWS_SECRET_ACCESS_KEY="$S3_SECRET_KEY"
+export AWS_DEFAULT_REGION="${S3_REGION:-auto}"
+
+S3_BUCKET_NAME="${S3_BUCKET_NAME:-lockbox}"
+
+# Try to list bucket contents (or check if bucket exists)
+if aws s3 ls "s3://$S3_BUCKET_NAME" --endpoint-url "$S3_ENDPOINT" > /dev/null 2>&1; then
+    echo "  ✓ S3 connection successful"
+    echo "  ✓ Bucket '$S3_BUCKET_NAME' is accessible"
+elif aws s3 ls --endpoint-url "$S3_ENDPOINT" > /dev/null 2>&1; then
+    echo "  ✓ S3 connection successful"
+    echo "  ⚠ Warning: Bucket '$S3_BUCKET_NAME' not found or not accessible"
+    echo "  Note: Bucket will be created automatically during first backup"
+else
+    echo "  ✗ ERROR: Cannot connect to S3 storage"
+    echo "  Please check:"
+    echo "    - S3_ENDPOINT is correct"
+    echo "    - S3_ACCESS_KEY is valid"
+    echo "    - S3_SECRET_KEY is valid"
+    echo "    - Network connectivity to S3 endpoint"
+    exit 1
+fi
+echo ""
+
 # Generate crontab from environment variables
 echo "Generating crontab from environment variables..."
 
