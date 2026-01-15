@@ -1,7 +1,7 @@
 services:
   lockbox-backup:
     image: ghcr.io/olushako/lockbox:latest
-    container_name: lockbox-backup
+    container_name: lockbox
     restart: unless-stopped
     
     # Mount Docker socket to access containers and volumes
