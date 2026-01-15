@@ -23,6 +23,10 @@ S3_BUCKET_PATH="volumes"
 S3_BUCKET_NAME=${S3_BUCKET_NAME:-lockbox}
 TEMP_BASE_DIR="/tmp/lockbox-backups"
 
+# Default exclusions (can be overridden by BACKUP_EXCLUDE_PATTERNS)
+DEFAULT_EXCLUDES="node_modules .venv venv __pycache__ .git .cache .npm"
+EXCLUDE_PATTERNS="${BACKUP_EXCLUDE_PATTERNS:-$DEFAULT_EXCLUDES}"
+
 # Check if password is set
 if [ -z "$BACKUP_PASSWORD" ]; then
     echo "Error: BACKUP_PASSWORD not set in .env file!"
@@ -85,11 +89,19 @@ for CONTAINER in $CONTAINERS; do
         # Create a temporary tar.xz file first (maximum compression)
         TEMP_TAR="$VOLUME_DIR/${VOLUME}_${TIMESTAMP}.tar.xz"
         
+        # Build exclusion arguments for tar (properly escaped for sh -c)
+        EXCLUDE_CMD=""
+        if [ -n "$EXCLUDE_PATTERNS" ]; then
+            for pattern in $EXCLUDE_PATTERNS; do
+                EXCLUDE_CMD="$EXCLUDE_CMD --exclude=$pattern"
+            done
+        fi
+        
         docker run --rm \
             -v "$VOLUME:/volume" \
             -v "$VOLUME_DIR:/backup" \
             alpine \
-            sh -c "apk add --no-cache xz > /dev/null 2>&1 && tar cJf /backup/${VOLUME}_${TIMESTAMP}.tar.xz -C /volume ."
+            sh -c "apk add --no-cache xz > /dev/null 2>&1 && cd /volume && tar cJf /backup/${VOLUME}_${TIMESTAMP}.tar.xz $EXCLUDE_CMD ."
         
         if [ $? -ne 0 ]; then
             echo "    ✗ Failed to create tar.xz for $VOLUME"

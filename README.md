@@ -105,6 +105,9 @@ S3_BUCKET_NAME=lockbox            # Default: lockbox
 BACKUP_RETENTION_DAYS=30          # Default: 30
 TZ=UTC                            # Default: UTC
 
+# Backup Exclusions (space-separated patterns)
+BACKUP_EXCLUDE_PATTERNS=node_modules .venv venv __pycache__ .git .cache .npm
+
 # Cron Schedules (minute hour day month weekday)
 CRON_VOLUMES=0 2 * * *            # Default: Daily at 2:00 AM
 CRON_PG=15 2 * * *                # Default: Daily at 2:15 AM

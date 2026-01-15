@@ -7,6 +7,7 @@ services:
     # Mount Docker socket to access containers and volumes
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /tmp/lockbox-backups:/tmp/lockbox-backups
     
     # Environment variables
     environment:
@@ -23,6 +24,7 @@ services:
       
       # Optional - Backup configuration
       - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-30}
+      - BACKUP_EXCLUDE_PATTERNS=${BACKUP_EXCLUDE_PATTERNS:-node_modules .venv venv __pycache__ .git .cache .npm}
       - TZ=${TZ:-UTC}
       
       # Optional - Cron schedules
