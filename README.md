@@ -106,7 +106,16 @@ BACKUP_RETENTION_DAYS=30          # Default: 30
 TZ=UTC                            # Default: UTC
 
 # Backup Exclusions (space-separated patterns)
+# Excludes common development folders from volume backups
+# Default: node_modules .venv venv __pycache__ .git .cache .npm
 BACKUP_EXCLUDE_PATTERNS=node_modules .venv venv __pycache__ .git .cache .npm
+
+# Examples:
+# Exclude only node_modules and .git:
+# BACKUP_EXCLUDE_PATTERNS=node_modules .git
+#
+# No exclusions (backup everything):
+# BACKUP_EXCLUDE_PATTERNS=""
 
 # Cron Schedules (minute hour day month weekday)
 CRON_VOLUMES=0 2 * * *            # Default: Daily at 2:00 AM
@@ -149,15 +158,42 @@ docker exec lockbox-backup cat /var/log/backups/redis.log
 docker exec lockbox-backup cat /var/log/backups/cleanup.log
 ```
 
+## Advanced Configuration
+
+### Backup Exclusions
+
+By default, volume backups exclude common development folders to reduce backup size:
+- `node_modules` - Node.js dependencies
+- `.venv`, `venv` - Python virtual environments
+- `__pycache__` - Python cache files
+- `.git` - Git repository data
+- `.cache` - Cache directories
+- `.npm` - NPM cache
+
+**Customize exclusions:**
+```bash
+# Exclude only specific folders
+BACKUP_EXCLUDE_PATTERNS="node_modules .git" docker-compose up -d
+
+# Backup everything (no exclusions)
+BACKUP_EXCLUDE_PATTERNS="" docker-compose up -d
+
+# Add custom exclusions
+BACKUP_EXCLUDE_PATTERNS="node_modules .venv build dist" docker-compose up -d
+```
+
 ## Features
 
 - **Automated Backups**: Scheduled via cron (customizable)
 - **Maximum Compression**: XZ compression for smallest size
 - **AES-256 Encryption**: Password-protected 7z archives
+- **Smart Exclusions**: Skip node_modules, .venv, .git, etc. (customizable)
 - **S3-Compatible**: Works with Cloudflare R2, AWS S3, MinIO, etc.
 - **Automatic Cleanup**: Configurable retention period
 - **Easy Restore**: Single script for all operations
 - **Validation**: Environment and cron schedule validation
+- **Connection Test**: S3 credentials validated on startup
+- **Multi-arch**: Pre-built images for amd64 and arm64
 
 ## Project Structure
 
